@@ -2,57 +2,181 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>我的极简时钟</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣诞快乐 炫酷圣诞树</title>
     <style>
-        /* 这里的 CSS 负责背景和漂亮的外观 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: white;
+            background: #000000; /* 纯黑背景 氛围感 */
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden; /* 隐藏滚动条 */
         }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* 圣诞树整体容器 */
+        .christmas-tree {
+            position: relative;
+            transform: scale(1.2);
         }
-
-        #clock {
-            font-size: 8rem;
+        /* 树顶星星 */
+        .star {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starRotate 8s linear infinite, starTwinkle 2s ease-in-out infinite alternate;
+            z-index: 100;
+        }
+        /* 星星旋转动画 */
+        @keyframes starRotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+        /* 星星闪烁动画 */
+        @keyframes starTwinkle {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.8); }
+        }
+        /* 圣诞树主体 - 三层渐变树冠+树干 */
+        .tree {
+            position: relative;
+            top: 20px;
+        }
+        .tree-top {
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 120px solid #009933;
+            margin: 0 auto;
+        }
+        .tree-middle {
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 150px solid #00802b;
+            margin: -20px auto 0;
+        }
+        .tree-bottom {
+            width: 0;
+            height: 0;
+            border-left: 130px solid transparent;
+            border-right: 130px solid transparent;
+            border-bottom: 180px solid #006622;
+            margin: -20px auto 0;
+        }
+        .tree-trunk {
+            width: 40px;
+            height: 80px;
+            background: #663300;
+            margin: 0 auto;
+            border-radius: 5px;
+        }
+        /* 彩灯样式 - 闪烁的小圆点 */
+        .light {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: lightTwinkle 1.5s ease-in-out infinite alternate;
+        }
+        /* 彩灯随机闪烁动画 */
+        @keyframes lightTwinkle {
+            0% { opacity: 0.6; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+        /* 雪花样式 */
+        .snow {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: snowfall linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 雪花飘落动画 */
+        @keyframes snowfall {
+            0% { transform: translateY(-10px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        /* 底部圣诞文字 */
+        .text {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: 20px;
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px 60px;
-            border-radius: 30px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff9900;
         }
     </style>
 </head>
 <body>
-
-    <div id="clock">00:00:00</div>
+    <div class="christmas-tree">
+        <div class="star"></div>
+        <div class="tree">
+            <div class="tree-top"></div>
+            <div class="tree-middle"></div>
+            <div class="tree-bottom"></div>
+            <div class="tree-trunk"></div>
+        </div>
+        <div class="text">圣诞快乐 🎄 Merry Christmas</div>
+    </div>
 
     <script>
-        // 这里的 JavaScript 负责让时钟动起来
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        // ========== 生成随机彩色彩灯 ==========
+        const tree = document.querySelector('.christmas-tree');
+        const lightColors = ['#ff0000', '#ff9900', '#ffff00', '#00ff00', '#0099ff', '#9900ff', '#ff0099']; // 彩灯配色：红、橙、黄、绿、蓝、紫、粉
+        const lightCount = 120; // 彩灯数量
+
+        for (let i = 0; i < lightCount; i++) {
+            const light = document.createElement('div');
+            light.classList.add('light');
+            // 随机彩灯位置（圣诞树范围内）
+            const x = Math.random() * 260 - 130;
+            const y = Math.random() * 400 + 20;
+            light.style.left = `calc(50% + ${x}px)`;
+            light.style.top = `${y}px`;
+            // 随机彩灯颜色
+            light.style.background = lightColors[Math.floor(Math.random() * lightColors.length)];
+            // 随机闪烁延迟，让闪烁效果错落有致
+            light.style.animationDelay = `${Math.random() * 2}s`;
+            tree.appendChild(light);
         }
 
-        setInterval(updateClock, 1000);
-        updateClock(); // 立即执行一次，防止刷新瞬间显示 00:00:00
+        // ========== 生成全屏飘落雪花 ==========
+        const snowCount = 200; // 雪花数量
+        const body = document.querySelector('body');
+
+        for (let i = 0; i < snowCount; i++) {
+            const snow = document.createElement('div');
+            snow.classList.add('snow');
+            // 随机雪花大小
+            const size = Math.random() * 4 + 1;
+            snow.style.width = `${size}px`;
+            snow.style.height = `${size}px`;
+            // 随机雪花位置
+            snow.style.left = `${Math.random() * 100}vw`;
+            snow.style.top = `${Math.random() * -100}px`;
+            // 随机飘落速度和延迟，雪花飘落有层次感
+            const duration = Math.random() * 20 + 10;
+            snow.style.animationDuration = `${duration}s`;
+            snow.style.animationDelay = `${Math.random() * 20}s`;
+            body.appendChild(snow);
+        }
     </script>
 </body>
 </html>

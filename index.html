@@ -1,118 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Sparkling Christmas Tree</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        canvas {
-            display: block;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>视频播放</title>
+  <style>
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      background:#0b0f17;
+      color:#e8eefc;
+      display:flex;
+      min-height:100vh;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:min(960px, 100%);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:16px;
+      padding:18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    }
+    h1{
+      font-size:18px;
+      margin:0 0 12px;
+      font-weight:600;
+      opacity:.95;
+    }
+    .video-wrap{
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      background:#000;
+      border-radius:14px;
+      overflow:hidden;
+    }
+    video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+      background:#000;
+    }
+    .tip{
+      margin-top:12px;
+      font-size:13px;
+      opacity:.8;
+      line-height:1.6;
+    }
+    code{
+      background:rgba(255,255,255,0.08);
+      padding:2px 6px;
+      border-radius:6px;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="treeCanvas"></canvas>
-    <script>
-        const canvas = document.getElementById('treeCanvas');
-        const ctx = canvas.getContext('2d');
+  <div class="card">
+    <h1>视频播放器</h1>
 
-        let width, height;
-        let particles = [];
-        const particleCount = 2000;
+    <div class="video-wrap">
+      <!-- ✅ 把 myvideo.mp4 换成你网站上的视频路径/URL -->
+      <video controls playsinline preload="metadata">
+        <source src="myvideo.mp4" type="video/mp4" />
+        你的浏览器不支持 HTML5 视频播放。
+      </video>
+    </div>
 
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    angle: Math.random() * Math.PI * 2,
-                    y: Math.random(), // 0 to 1 (top to bottom)
-                    speed: 0.01 + Math.random() * 0.02,
-                    radius: Math.random() * 2 + 1,
-                    color: `hsla(${340 + Math.random() * 30}, 80%, 60%, ${Math.random() * 0.8 + 0.2})`
-                });
-            }
-        }
-
-        function drawHeart(x, y, size) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.translate(x, y);
-            ctx.scale(size, size);
-            ctx.moveTo(0, 0);
-            ctx.bezierCurveTo(0, -3, -5, -15, -15, -15);
-            ctx.bezierCurveTo(-35, -15, -35, 10, -35, 10);
-            ctx.bezierCurveTo(-35, 30, -15, 50, 0, 70);
-            ctx.bezierCurveTo(15, 50, 35, 30, 35, 10);
-            ctx.bezierCurveTo(35, 10, 35, -15, 15, -15);
-            ctx.bezierCurveTo(5, -15, 0, -3, 0, 0);
-            ctx.fillStyle = "#ff3366";
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = "#ff3366";
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            ctx.fillRect(0, 0, width, height);
-
-            const time = Date.now() * 0.001;
-            const centerX = width / 2;
-            const treeBaseY = height * 0.85;
-            const treeHeight = height * 0.65;
-
-            particles.forEach(p => {
-                const rotation = p.angle + time * p.speed * 50;
-                const r = p.y * (width < 500 ? 150 : 250); // Cone shape
-                const x = centerX + Math.cos(rotation) * r;
-                const y = treeBaseY - p.y * treeHeight;
-
-                ctx.beginPath();
-                ctx.arc(x, y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-
-                if (Math.random() > 0.98) {
-                    ctx.fillStyle = "#fff";
-                    ctx.arc(x, y, p.radius * 1.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-
-            // Draw text
-            ctx.font = "italic 30px serif";
-            ctx.fillStyle = "#ffcccc";
-            ctx.fillText("Merry Christmas", 50, height / 2);
-
-            // Draw Heart on top
-            drawHeart(centerX, treeBaseY - treeHeight - 10, 0.3);
-
-            // Draw ground ripples
-            for (let i = 0; i < 3; i++) {
-                ctx.beginPath();
-                ctx.ellipse(centerX, treeBaseY, 300 * (i + 1) / 3, 50 * (i + 1) / 3, 0, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(255, 100, 150, ${0.1 * (3 - i)})`;
-                ctx.stroke();
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', init);
-        init();
-        animate();
-    </script>
+    <div class="tip">
+      使用方法：把视频文件和本 HTML 放同一目录，或把 <code>src="myvideo.mp4"</code> 改成完整链接（例如 <code>src="/assets/myvideo.mp4"</code> 或 <code>https://xxx.com/myvideo.mp4</code>）。
+    </div>
+  </div>
 </body>
 </html>

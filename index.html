@@ -1,120 +1,245 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🎄 Merry Christmas</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎄</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: radial-gradient(1200px 700px at 50% 20%, #0e1b35 0%, #08101f 55%, #050a14 100%);
+      overflow: hidden;
+      font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
 
-<style>
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#0b1220;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-}
+    /* 让画面居中 */
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
 
-.tree{
-  position:relative;
-  width:300px;
-  height:420px;
-}
+    /* 圣诞树容器 */
+    .tree {
+      position: relative;
+      width: min(40vmin, 340px);
+      height: min(52vmin, 440px);
+      transform: translateY(-2vmin);
+    }
 
-.layer{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  border-left:140px solid transparent;
-  border-right:140px solid transparent;
-  border-bottom:100px solid #0f8f4d;
-}
+    /* 星星 */
+    .star {
+      position: absolute;
+      left: 50%;
+      top: 2%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.35));
+      animation: starTwinkle 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes starTwinkle {
+      from { transform: translateX(-50%) scale(0.95); opacity: 0.75; }
+      to   { transform: translateX(-50%) scale(1.10); opacity: 1; }
+    }
 
-.layer:nth-child(1){ top:120px; }
-.layer:nth-child(2){
-  top:60px;
-  border-left-width:110px;
-  border-right-width:110px;
-  border-bottom-width:90px;
-}
-.layer:nth-child(3){
-  top:0;
-  border-left-width:80px;
-  border-right-width:80px;
-  border-bottom-width:80px;
-}
+    /* 树叶三层（用 CSS 三角形） */
+    .layer {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 18vmin solid transparent;
+      border-right: 18vmin solid transparent;
+      border-bottom: 12vmin solid #108b4c;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.25));
+    }
 
-.trunk{
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:40px;
-  height:70px;
-  background:#7b4a12;
-  border-radius:6px;
-}
+    .layer.l1 { top: 18%; border-left-width: 18vmin; border-right-width: 18vmin; border-bottom-width: 12vmin; }
+    .layer.l2 { top: 30%; border-left-width: 14vmin; border-right-width: 14vmin; border-bottom-width: 10vmin; }
+    .layer.l3 { top: 40%; border-left-width: 10vmin; border-right-width: 10vmin; border-bottom-width: 8vmin; }
 
-.star{
-  position:absolute;
-  top:-40px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:40px;
-  color:#ffd700;
-  animation:twinkle 1.5s infinite alternate;
-}
+    /* 做出你图里那种“中间凹一口”的树形：加一层小缺口 */
+    .notch {
+      position: absolute;
+      left: 50%;
+      top: 35%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6.5vmin solid transparent;
+      border-right: 6.5vmin solid transparent;
+      border-bottom: 4.2vmin solid rgba(5,10,20,0.95); /* 用背景色挖空 */
+    }
 
-@keyframes twinkle{
-  from{opacity:.6; transform:translateX(-50%) scale(1);}
-  to{opacity:1; transform:translateX(-50%) scale(1.2);}
-}
+    /* 树干 */
+    .trunk {
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      transform: translateX(-50%);
+      width: 7.5vmin;
+      max-width: 58px;
+      height: 11vmin;
+      max-height: 90px;
+      background: #7a4b14;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
 
-.snow{
-  position:absolute;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
+    /* 雪花层（Canvas 全屏） */
+    canvas#snow {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
 
-.snow span{
-  position:absolute;
-  top:-10px;
-  color:white;
-  font-size:10px;
-  animation:fall linear infinite;
-  opacity:.8;
-}
-
-@keyframes fall{
-  to{ transform:translateY(110vh); }
-}
-</style>
+    /* 小提示（可删） */
+    .hint {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      font-size: 12px;
+      opacity: 0.55;
+      color: #cfe2ff;
+      user-select: none;
+      letter-spacing: 0.3px;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="tree">
-    <div class="star">★</div>
-    <div class="layer"></div>
-    <div class="layer"></div>
-    <div class="layer"></div>
-    <div class="trunk"></div>
+  <canvas id="snow"></canvas>
+
+  <div class="scene">
+    <div class="tree" aria-label="Christmas Tree">
+      <!-- 星星（SVG，稳、清晰） -->
+      <svg class="star" viewBox="0 0 100 100" aria-hidden="true">
+        <polygon
+          points="50,6 61,38 95,38 67,57 78,90 50,71 22,90 33,57 5,38 39,38"
+          fill="#f6c500" />
+      </svg>
+
+      <!-- 树叶 -->
+      <div class="layer l1"></div>
+      <div class="layer l2"></div>
+      <div class="layer l3"></div>
+
+      <!-- 中间挖空缺口 -->
+      <div class="notch"></div>
+
+      <!-- 树干 -->
+      <div class="trunk"></div>
+    </div>
   </div>
 
-  <div class="snow" id="snow"></div>
+  <div class="hint">打开网址就能看到：圣诞树 + 下雪动画</div>
 
-<script>
-const snow = document.getElementById("snow");
-for(let i=0;i<80;i++){
-  const s=document.createElement("span");
-  s.innerHTML="❄";
-  s.style.left=Math.random()*100+"vw";
-  s.style.animationDuration=5+Math.random()*5+"s";
-  s.style.fontSize=8+Math.random()*10+"px";
-  snow.appendChild(s);
-}
-</script>
+  <script>
+    // ===== 雪花动画（Canvas）=====
+    const canvas = document.getElementById("snow");
+    const ctx = canvas.getContext("2d");
+
+    function resize() {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const FLAKES = [];
+    const COUNT = Math.min(140, Math.floor((window.innerWidth * window.innerHeight) / 12000) + 60);
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function makeFlake() {
+      return {
+        x: rand(0, window.innerWidth),
+        y: rand(-window.innerHeight, 0),
+        r: rand(1.2, 3.6),
+        vy: rand(0.6, 1.8),
+        vx: rand(-0.35, 0.35),
+        drift: rand(0.002, 0.010),
+        phase: rand(0, Math.PI * 2),
+        opacity: rand(0.45, 0.95),
+        // 让一部分雪花像“六瓣雪花”一样（类似你图里那种小花）
+        fancy: Math.random() < 0.35
+      };
+    }
+
+    for (let i = 0; i < COUNT; i++) FLAKES.push(makeFlake());
+
+    function drawFancySnowflake(x, y, r, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(x, y);
+      ctx.lineWidth = Math.max(1, r * 0.45);
+      ctx.strokeStyle = "rgba(255,255,255,0.95)";
+      for (let k = 0; k < 6; k++) {
+        ctx.rotate(Math.PI / 3);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -r * 2.2);
+        ctx.stroke();
+
+        // 小分叉
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.4);
+        ctx.lineTo(r * 0.7, -r * 1.8);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.4);
+        ctx.lineTo(-r * 0.7, -r * 1.8);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawDot(x, y, r, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (const f of FLAKES) {
+        f.phase += f.drift * 60;
+        f.x += f.vx + Math.sin(f.phase) * 0.35;
+        f.y += f.vy;
+
+        // 重生
+        if (f.y > window.innerHeight + 10) {
+          f.y = rand(-80, -10);
+          f.x = rand(0, window.innerWidth);
+        }
+        if (f.x < -20) f.x = window.innerWidth + 20;
+        if (f.x > window.innerWidth + 20) f.x = -20;
+
+        if (f.fancy) drawFancySnowflake(f.x, f.y, f.r, f.opacity);
+        else drawDot(f.x, f.y, f.r, f.opacity);
+      }
+
+      requestAnimationFrame(step);
+    }
+    step();
+  </script>
 </body>
 </html>

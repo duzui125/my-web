@@ -1,34 +1,120 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>视频</title>
-  <style>
-    html, body { height: 100%; margin: 0; background: #000; }
-    .wrap {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      max-width: 100vw;
-      max-height: 100vh;
-      object-fit: contain; /* 保持比例不裁切 */
-      background: #000;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎄 Merry Christmas</title>
+
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#0b1220;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.tree{
+  position:relative;
+  width:300px;
+  height:420px;
+}
+
+.layer{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  border-left:140px solid transparent;
+  border-right:140px solid transparent;
+  border-bottom:100px solid #0f8f4d;
+}
+
+.layer:nth-child(1){ top:120px; }
+.layer:nth-child(2){
+  top:60px;
+  border-left-width:110px;
+  border-right-width:110px;
+  border-bottom-width:90px;
+}
+.layer:nth-child(3){
+  top:0;
+  border-left-width:80px;
+  border-right-width:80px;
+  border-bottom-width:80px;
+}
+
+.trunk{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:40px;
+  height:70px;
+  background:#7b4a12;
+  border-radius:6px;
+}
+
+.star{
+  position:absolute;
+  top:-40px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:40px;
+  color:#ffd700;
+  animation:twinkle 1.5s infinite alternate;
+}
+
+@keyframes twinkle{
+  from{opacity:.6; transform:translateX(-50%) scale(1);}
+  to{opacity:1; transform:translateX(-50%) scale(1.2);}
+}
+
+.snow{
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.snow span{
+  position:absolute;
+  top:-10px;
+  color:white;
+  font-size:10px;
+  animation:fall linear infinite;
+  opacity:.8;
+}
+
+@keyframes fall{
+  to{ transform:translateY(110vh); }
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <!-- ✅ 把这里换成你的视频地址 -->
-    <video controls playsinline preload="metadata">
-      <source src="myvideo.mp4" type="video/mp4" />
-      你的浏览器不支持视频播放。
-    </video>
+  <div class="tree">
+    <div class="star">★</div>
+    <div class="layer"></div>
+    <div class="layer"></div>
+    <div class="layer"></div>
+    <div class="trunk"></div>
   </div>
+
+  <div class="snow" id="snow"></div>
+
+<script>
+const snow = document.getElementById("snow");
+for(let i=0;i<80;i++){
+  const s=document.createElement("span");
+  s.innerHTML="❄";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDuration=5+Math.random()*5+"s";
+  s.style.fontSize=8+Math.random()*10+"px";
+  snow.appendChild(s);
+}
+</script>
 </body>
 </html>

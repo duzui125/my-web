@@ -1,28 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>我的个人主页</title>
+    <title>我的极简时钟</title>
     <style>
-        body { background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
-        .container { text-align: center; }
-        #time { font-size: 5rem; font-weight: bold; margin-bottom: 10px; }
-        #date { font-size: 1.5rem; color: #888; }
+        /* 这里的 CSS 负责背景和漂亮的外观 */
+        body {
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #clock {
+            font-size: 8rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 60px;
+            border-radius: 30px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="time"></div>
-        <div id="date"></div>
-    </div>
+
+    <div id="clock">00:00:00</div>
+
     <script>
-        function update() {
+        // 这里的 JavaScript 负责让时钟动起来
+        function updateClock() {
             const now = new Date();
-            document.getElementById('time').innerHTML = now.toLocaleTimeString();
-            document.getElementById('date').innerHTML = now.toLocaleDateString();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
         }
-        setInterval(update, 1000);
-        update();
+
+        setInterval(updateClock, 1000);
+        updateClock(); // 立即执行一次，防止刷新瞬间显示 00:00:00
     </script>
 </body>
 </html>
